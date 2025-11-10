@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Testcontainers.PostgreSql;
+using Testcontainers.MsSql;
 using UnitTestSample01.Model;
 
 namespace XunitTestProject.IntegrationTests.Fixtures
@@ -12,18 +12,13 @@ namespace XunitTestProject.IntegrationTests.Fixtures
     /// </summary>
     public class DatabasePostgresContainerFixture : IAsyncLifetime
     {
-        private readonly PostgreSqlContainer _postgresContainer;
+        private readonly MsSqlContainer _postgresContainer;
         private IServiceProvider? _serviceProvider;
 
         public DatabasePostgresContainerFixture()
         {
-            // Create a PostgreSQL container using Testcontainers
-            // PostgreSQL starts in 5-10 seconds, much faster than SQL Server
-            _postgresContainer = new PostgreSqlBuilder()
-                .WithImage("postgres:16-alpine")  // Alpine is lightweight and fast
-                .WithDatabase("testdb")
-                .WithUsername("testuser")
-                .WithPassword("testpass")
+            _postgresContainer = new MsSqlBuilder()
+                .WithImage("mcr.microsoft.com/mssql/server:2022-latest")
                 .Build();
         }
 
@@ -46,7 +41,7 @@ namespace XunitTestProject.IntegrationTests.Fixtures
             // Configure DbContext with the container's connection string
             // Using PostgreSQL instead of SQL Server
             services.AddDbContext<AppDbContext>(options =>
-                options.UseNpgsql(_postgresContainer.GetConnectionString())
+                options.UseAzureSql(_postgresContainer.GetConnectionString())
                        .EnableSensitiveDataLogging()
                        .EnableDetailedErrors());
 
