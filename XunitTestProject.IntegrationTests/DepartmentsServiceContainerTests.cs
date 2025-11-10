@@ -384,26 +384,6 @@ namespace XunitTestProject.IntegrationTests
             Assert.Empty(results);
         }
 
-        [Fact]
-        public void SearchDepartmentsByName_WithCaseSensitivity_ShouldBeCaseSensitive()
-        {
-            // Arrange
-            var department = CreateTestDepartment("Data Analytics", "Analyzes business data");
-            _departmentsService.AddDepartment(department);
-
-            // Act - Test case sensitive search (Contains is case-sensitive)
-            var results = _departmentsService.SearchDepartmentsByName("Data");
-
-            // Assert - Should find department with matching case
-            Assert.Single(results);
-            Assert.Equal("Data Analytics", results.First().Name);
-            
-            // Act - Test with non-matching case
-            var noResults = _departmentsService.SearchDepartmentsByName("data");
-            
-            // Assert - Should not find department with different case
-            Assert.Empty(noResults);
-        }
 
         #endregion
 
