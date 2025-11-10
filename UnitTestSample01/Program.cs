@@ -15,9 +15,9 @@ namespace UnitTestSample01
             AppDbContext appDbContext = new AppDbContext(optionsBuilder.Options);
             Console.WriteLine("Departments:");
 
-            DepartmentsService departmentsService = new DepartmentsService(appDbContext);
-            Department department = new Department();
-            departmentsService.AddDepartment(department);
+            //DepartmentsService departmentsService = new DepartmentsService(appDbContext);
+            //Department department = new Department();
+            //departmentsService.AddDepartment(department);
 
             //Console.WriteLine("Hello, World!");
             //int x = 1;

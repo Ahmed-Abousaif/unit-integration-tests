@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,9 +12,13 @@ namespace UnitTestSample01.Services
     public class DepartmentsService
     {
         AppDbContext _dbContext;
-        public DepartmentsService(AppDbContext appDbContext)
+        private readonly ILogger<DepartmentsService> _logger;
+
+        public DepartmentsService(AppDbContext appDbContext
+            , ILogger<DepartmentsService> logger)
         {
             _dbContext = appDbContext ?? throw new ArgumentNullException(nameof(appDbContext));
+            _logger = logger;
         }
 
         // Add method to add department
