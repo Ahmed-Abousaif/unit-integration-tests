@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,26 +22,31 @@ namespace UnitTestSample01.Services
             _logger = logger;
         }
 
+        /// <summary>
+        /// Validates a department using data annotations
+        /// </summary>
+        private void ValidateDepartment(Department department)
+        {
+            var validationContext = new ValidationContext(department);
+            var validationResults = new List<ValidationResult>();
+            
+            bool isValid = Validator.TryValidateObject(department, validationContext, validationResults, validateAllProperties: true);
+            
+            if (!isValid)
+            {
+                var firstError = validationResults.First();
+                var propertyName = firstError.MemberNames.FirstOrDefault() ?? "department";
+                throw new ArgumentException(firstError.ErrorMessage, propertyName);
+            }
+        }
+
         // Add method to add department
         public void AddDepartment(Department department)
         {
             ArgumentNullException.ThrowIfNull(department);
-            // validate department properties
-
-            if (string.IsNullOrWhiteSpace(department.Name))
-            {
-                throw new ArgumentException("Department name cannot be null or empty.", nameof(department.Name));
-            }
-
-            if (department.Name.Length > 100)
-            {
-                throw new ArgumentException("Department name cannot exceed 100 characters.", nameof(department.Name));
-            }
-
-            if (!string.IsNullOrWhiteSpace(department.Description) && department.Description.Length > 500)
-            {
-                throw new ArgumentException("Department description cannot exceed 500 characters.", nameof(department.Description));
-            }
+            
+            // Validate department using data annotations
+            ValidateDepartment(department);
 
             // Add validation for duplicate department names
             bool isDuplicate = _dbContext.Departments.Any(d => d.Name == department.Name);
@@ -57,19 +63,10 @@ namespace UnitTestSample01.Services
         public void UpdateDepartment(Department department)
         {
             ArgumentNullException.ThrowIfNull(department);
-            // validate department properties
-            if (string.IsNullOrWhiteSpace(department.Name))
-            {
-                throw new ArgumentException("Department name cannot be null or empty.", nameof(department.Name));
-            }
-            if (department.Name.Length > 100)
-            {
-                throw new ArgumentException("Department name cannot exceed 100 characters.", nameof(department.Name));
-            }
-            if (!string.IsNullOrWhiteSpace(department.Description) && department.Description.Length > 500)
-            {
-                throw new ArgumentException("Department description cannot exceed 500 characters.", nameof(department.Description));
-            }
+            
+            // Validate department using data annotations
+            ValidateDepartment(department);
+            
             // Add validation for duplicate department names
             bool isDuplicate = _dbContext.Departments.Any(d => d.Name == department.Name && d.Id != department.Id);
             if (isDuplicate)
